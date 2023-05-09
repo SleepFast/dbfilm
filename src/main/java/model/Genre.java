@@ -3,6 +3,10 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,13 +20,10 @@ public class Genre {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@ManyToMany
-    @JoinTable( name = "T_Film_Genre_Associations",
-                joinColumns = @JoinColumn( name = "id_Genre"),
-                inverseJoinColumns = @JoinColumn( name = "id_Film"))
+	@ManyToMany(mappedBy = "genre")
+
     private List<Film> films = new ArrayList<>();
 	private String nom;
-	
 	public Long getId() {
 		return id;
 	}

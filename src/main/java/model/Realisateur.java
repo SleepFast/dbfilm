@@ -8,8 +8,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 
 @Entity
@@ -17,10 +15,10 @@ public class Realisateur {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@ManyToMany
-    @JoinTable( name = "T_Film_Realisateur_Associations",
-                joinColumns = @JoinColumn( name = "id_Realisateur"),
-                inverseJoinColumns = @JoinColumn( name = "id_Film"))
+	@ManyToMany(mappedBy = "realisateurs")
+    // @JoinTable( name = "T_Film_Realisateur_Associations",
+    //             joinColumns = @JoinColumn( name = "id_Realisateur"),
+    //             inverseJoinColumns = @JoinColumn( name = "id_Film"))
     private List<Film> films = new ArrayList<>();
 	private String identite;
 	private String url;

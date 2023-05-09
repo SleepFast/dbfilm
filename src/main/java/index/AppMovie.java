@@ -1,10 +1,19 @@
 package index;
 
+
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import parser.Json;
 import jakarta.persistence.EntityManager;
 import model.Acteur;
 import model.Film;
@@ -23,7 +32,7 @@ public class AppMovie {
 		film.setLangue("Fr");
 		film.setPlot("lalalalal");
 		film.setNom("thor");
-		film.setSortie(new Date());
+		film.setSortie("2012");
 		film.setUrl("titi/tata/pouet");
 
 		Realisateur real = new Realisateur();
@@ -49,7 +58,7 @@ public class AppMovie {
 		acteur.setId("qskpgnjlmqsdng");
 		acteur.setIdentite("pouet pit");
 		acteur.setLieuNaissance("pat");
-		acteur.setNaissance(new Date());
+		acteur.setNaissance("25/06/1997");
 		acteur.setUrl("pouet/pit/part.com");
 
 		Role role = new Role();
@@ -68,28 +77,36 @@ public class AppMovie {
 		
 		film.setLieu(lieu);
 		film.setPays(pays);
-
+		
 		List<Realisateur> listReal = new ArrayList<>(Arrays.asList(real, real2));
 		film.setRealisateurs(listReal);
 		List<Genre> listGenre = new ArrayList<>(Arrays.asList(genre, genre1));
 		film.setGenre(listGenre);
-
+		
+		ObjectMapper mapper = Json.getMapper();
+		
 		em.getTransaction().begin();
-		em.persist(genre);
-		em.persist(genre1);
-		em.persist(real);
-		em.persist(real1);
-		em.persist(real2);
-		em.persist(pays);
-		em.persist(lieu);
-		em.persist(film);
-		em.persist(acteur);
-		em.persist(role);
-		em.persist(role1);
-		em.getTransaction().commit();
+		try {
+			Film[] mesFilms = mapper.readValue(new File("filmsTest.json"), Film[].class);
+			for (Film monfilm : mesFilms) {
+				System.out.println(monfilm);
+				em.merge(monfilm);
+			}
+		} catch (JsonParseException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
+		// em.persist(film);
+		em.getTransaction().commit();
+		
 
 		em.close();
+		
+		
 	}
-
+	
 }
