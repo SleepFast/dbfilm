@@ -11,20 +11,25 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
 
 @Entity
 @JsonIgnoreProperties({"film"})
-// @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id", scope=Role.class, resolver=CustomObjectIdResolver.class)
+@NamedQueries({
+    @NamedQuery(name = "Role.findByActorId", query = "SELECT r FROM Role r WHERE r.acteur.id = :acteur"),
+	@NamedQuery(name = "Role.findByFilmId", query = "SELECT r from Role r WHERE r.film.id = :film")
+})
 public class Role {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE) 
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL) 
 	@JoinColumn(name="idFilm")
     private Film film;
 
-	@ManyToOne(cascade = CascadeType.MERGE)
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="idActeur")
     private Acteur acteur;
 

@@ -19,10 +19,7 @@ public class Json {
         return new ObjectMapper();
     }
 
-    public static void parseJson(String src) {
-        EntityManager em = UtilsMovie.getInstance().getEntityManager();
-
-        em.getTransaction().begin();
+    public static void parseJson(String src, EntityManager em) {
         try {
             Film[] films = MAPPER.readValue(new File(src), Film[].class);
             for (Film film : films) {
@@ -38,8 +35,5 @@ public class Json {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        em.getTransaction().commit();
-        em.close();
     }
 }

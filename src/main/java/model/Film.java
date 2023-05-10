@@ -13,13 +13,15 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 
 @Entity
 @JsonIgnoreProperties(value = {"castingPrincipal"})
-// @NamedQueries({
-    // @NamedQuery(name = "Film.findById", query = "SELECT f FROM Film f WHERE f.id = :film")
-// })
+@NamedQueries({
+    @NamedQuery(name = "Film.findByActorId", query = "SELECT f FROM Film f WHERE f.nom LIKE :film")
+})
 public class Film {
     @Id
     private String id;
@@ -38,7 +40,7 @@ public class Film {
                 inverseJoinColumns = @JoinColumn( name = "id_Realisateur" ))
     private List<Realisateur> realisateurs = new ArrayList<>();
 
-	@OneToMany( targetEntity=Role.class, mappedBy="film", cascade = CascadeType.MERGE )
+	@OneToMany( targetEntity=Role.class, mappedBy="film", cascade = CascadeType.ALL )
     private List<Role> roles = new ArrayList<>();
 
 	@ManyToMany(cascade = CascadeType.ALL)
@@ -141,6 +143,6 @@ public class Film {
 	
 	@Override
 	public String toString() {
-		return "Film [id=" + id + ", nom=" + nom + ", url=" + url + ", plot=" + plot + ", langue=" + langue + ", casting=" + roles + ", sortie=" + sortie + "]";
+		return "Film [id=" + id + ", nom=" + nom + ", url=" + url + ", plot=" + plot + ", langue=" + langue + ", sortie=" + sortie + "]";
 	}
 }

@@ -10,15 +10,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 
 @Entity
 @JsonIgnoreProperties(value = {"height", "roles"})
-// @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id", scope=Acteur.class, resolver=CustomObjectIdResolver.class)
+@NamedQueries({
+    @NamedQuery(name = "Acteur.findByName", query = "SELECT a FROM Acteur a WHERE a.identite LIKE :name")
+})
 public class Acteur {
 	@Id
 	private String id;
-	@OneToMany( targetEntity=Role.class, mappedBy="acteur", fetch = FetchType.LAZY)
+
+	@OneToMany( targetEntity=Role.class, mappedBy="acteur")
     private List<Role> roles = new ArrayList<>();
 
 	private String identite;
