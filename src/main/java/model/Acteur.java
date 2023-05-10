@@ -1,14 +1,11 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -21,7 +18,7 @@ import jakarta.persistence.OneToMany;
 public class Acteur {
 	@Id
 	private String id;
-	@OneToMany( targetEntity=Role.class, mappedBy="acteur")
+	@OneToMany( targetEntity=Role.class, mappedBy="acteur", fetch = FetchType.LAZY)
     private List<Role> roles = new ArrayList<>();
 
 	private String identite;

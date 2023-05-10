@@ -3,12 +3,8 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -18,11 +14,12 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.Transient;
 
 @Entity
-@JsonIgnoreProperties(value = {"castingPrincipal", "genres"})
-// @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id", scope=Film.class, resolver=CustomObjectIdResolver.class)
+@JsonIgnoreProperties(value = {"castingPrincipal"})
+// @NamedQueries({
+    // @NamedQuery(name = "Film.findById", query = "SELECT f FROM Film f WHERE f.id = :film")
+// })
 public class Film {
     @Id
     private String id;
@@ -48,16 +45,25 @@ public class Film {
     @JoinTable( name = "T_Film_Genre_Associations",
                 joinColumns = @JoinColumn( name = "id_Film" ),
                 inverseJoinColumns = @JoinColumn( name = "id_Genre" ))
-    private List<Genre> genre = new ArrayList<>();
-
-	// @Transient
-	// private List<String> genres = new ArrayList<>();
+    private List<Genre> genreList = new ArrayList<>();
 
     private String nom;
     private String url;
     private String plot;
     private String langue;
 	private String sortie;
+
+	@JsonProperty("genres")
+    private void transformListToGenreList(List<String> noms) {
+		if (noms != null) {
+			for (String nom : noms) {
+				Genre genre = new Genre();
+				genre.setNom(nom);
+				genre.getFilms().add(this);
+				genreList.add(genre);
+			}
+		}
+    }
     
 	public String getId() {
 		return id;
@@ -126,12 +132,11 @@ public class Film {
 		this.realisateurs = realisateurs;
 	}
 
-	@JsonProperty("genres")
-	public List<Genre> getGenre() {
-		return genre;
+	public List<Genre> getGenreList() {
+		return genreList;
 	}
-	public void setGenre(List<Genre> genre) {
-		this.genre = genre;
+	public void setGenreList(List<Genre> genreList) {
+		this.genreList = genreList;
 	}
 	
 	@Override
