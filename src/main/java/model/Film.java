@@ -22,7 +22,7 @@ import jakarta.persistence.OneToMany;
 @Entity
 @JsonIgnoreProperties(value = {"castingPrincipal"})
 @NamedQueries({
-    @NamedQuery(name = "Film.findByFilmName", query = "SELECT f FROM Film f WHERE f.nom = :film"),
+    @NamedQuery(name = "Film.findByFilmName", query = "SELECT f FROM Film f WHERE f.nom = :film"), 
     @NamedQuery(name = "Film.findByDate", query = "SELECT f FROM Film f WHERE EXTRACT(YEAR FROM f.sortie) BETWEEN :before AND :after"),
 	@NamedQuery(name = "Film.findByFilmName2", query = "SELECT f FROM Film f WHERE f.nom = :film or f.nom = :film2")
 })
@@ -104,8 +104,8 @@ public class Film {
 	public List<Role> getRoles() {
 		return roles;
 	}
-	public void setRoles(List<Role> casting) {
-		this.roles = casting;
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
 	}
 
 	@JsonProperty("anneeSortie")
@@ -163,6 +163,6 @@ public class Film {
 	
 	@Override
 	public String toString() {
-		return "Film [id=" + id + ", nom=" + nom + ", url=" + url + ", plot=" + plot + ", langue=" + langue + ", sortie=" + sortie + "]";
+		return "\n Film [id=" + id + ", nom=" + nom + ", url=" + url + ", plot=" + plot + ", langue=" + langue + ", sortie=" + sortie + "]\n";
 	}
 }
