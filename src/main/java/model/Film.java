@@ -1,6 +1,8 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -20,24 +22,25 @@ import jakarta.persistence.OneToMany;
 @Entity
 @JsonIgnoreProperties(value = {"castingPrincipal"})
 @NamedQueries({
-    @NamedQuery(name = "Film.findByActorId", query = "SELECT f FROM Film f WHERE f.nom LIKE :film")
+    @NamedQuery(name = "Film.findByFilmName", query = "SELECT f FROM Film f WHERE f.nom = :film"),
+    @NamedQuery(name = "Film.findByDate", query = "SELECT f FROM Film f WHERE EXTRACT(YEAR FROM f.sortie) BETWEEN :before AND :after"),
+	@NamedQuery(name = "Film.findByFilmName2", query = "SELECT f FROM Film f WHERE f.nom = :film or f.nom = :film2")
 })
 public class Film {
     @Id
     private String id;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="id_pays")
+	@ManyToOne(cascade = CascadeType.MERGE)
     private Pays pays;
 
 	@ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="id_lieu")
     private Lieu lieu;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable( name = "T_Film_Realisateur_Associations",
                 joinColumns = @JoinColumn( name = "id_Film" ),
-                inverseJoinColumns = @JoinColumn( name = "id_Realisateur" ))
+                inverseJoinColumns = @JoinColumn( name = "realisateur" ))
     private List<Realisateur> realisateurs = new ArrayList<>();
 
 	@OneToMany( targetEntity=Role.class, mappedBy="film", cascade = CascadeType.ALL )
@@ -53,7 +56,7 @@ public class Film {
     private String url;
     private String plot;
     private String langue;
-	private String sortie;
+	private Date sortie;
 
 	@JsonProperty("genres")
     private void transformListToGenreList(List<String> noms) {
@@ -106,11 +109,28 @@ public class Film {
 	}
 
 	@JsonProperty("anneeSortie")
-	public String getSortie() {
+	public Date getSortie() {
 		return sortie;
 	}
 	public void setSortie(String sortie) {
-		this.sortie = sortie;
+		if (sortie != "") {
+			int index = sortie.indexOf('/');
+			if (index > -1) {
+				sortie = sortie.substring(0, index);
+			}
+			index = sortie.indexOf('-');
+			if (index > -1) {
+				sortie = sortie.substring(0, index);
+			}
+			
+			Calendar cal = Calendar.getInstance();
+			cal.clear();
+			cal.set(Calendar.YEAR, Integer.parseInt(sortie));
+			Date date = cal.getTime();
+			this.sortie = date;
+		} else {
+			sortie = null;
+		}
 	}
 
     public Pays getPays() {
